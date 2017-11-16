@@ -20,18 +20,19 @@ class Login extends MY_Controller{
 	public function __construct(){
 		parent::__construct();
 
-                $this->_data['admin_cpanel_title'] = $this->lable['admin_cpanel_title'];
-                $this->_data['base_url'] = $this->config->item("base_url");
-                $this->_data['base_tlp_admin'] = $this->config->item("base_tlp_admin");
-                $this->_data['base_url_admin'] = $this->config->item("base_url_admin");
-		
-                
-		$this->load->library('form_validation');
-                $this->load->helper('form');
-                $this->load->model('login_model');
-				$this->load->model('users_model');
-                
-                $this->_data['lable'] = $this->lable;
+        $this->_data['admin_cpanel_title'] = $this->lable['admin_cpanel_title'];
+        $this->_data['base_url'] = $this->config->item("base_url");
+        $this->_data['base_tlp_admin'] = $this->config->item("base_tlp_admin");
+        $this->_data['base_url_admin'] = $this->config->item("base_url_admin");
+
+
+        $this->load->library('form_validation');
+        $this->load->helper('form');
+        $this->load->model('login_model');
+        $this->load->model('users_model');
+        $this->load->model('sessions_model');
+
+        $this->_data['lable'] = $this->lable;
         		
 	}
 	
@@ -57,6 +58,14 @@ class Login extends MY_Controller{
 					$userInfo = $this->users_model->getInfo();
 					
                     $this->session->set_userdata('login', $userInfo);
+                    $session_id = $this->session->userdata('session_id');
+                    $dataInsert['session_id'] = $session_id;
+                    $dataInsert['user_id'] = $this->users_model->id;
+                    $dataInsert['ip_address'] = $_SERVER['REMOTE_ADDR'];
+                    $dataInsert['user_agent'] = $userInfo->user_fullname;
+                    $dataInsert['last_activity'] = time();
+                    $dataInsert['user_data'] = json_encode($userInfo);
+                    $this->sessions_model->insertItem($dataInsert);
                     redirect(admin_url('index.html'));
                 }
             }  

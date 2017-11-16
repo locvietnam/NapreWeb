@@ -75,6 +75,8 @@
                 <div class="table-responsive">
                     <table class="table table-bordered table-custom text-center text-bold">
                         <tr class="text-purple f-16">
+                            <th style="min-width: 50px; width: 100px;">{$lable.year_month}</th>
+                            <th style="min-width: 100px; width: 100px;">{$lable.hospital}</th>
                             <th style="min-width: 100px; width: 100px;">{$lable.department}</th>
                             <th style="min-width: 120px; width: 120px;">{$lable.checklist}</th>
                             <th style="min-width: 120px; width: 120px;">{$lable.situation}</th>
@@ -83,6 +85,8 @@
                         {if $list}
                         	{foreach from=$list item=item}
                         <tr>
+                            <td class="text-danger f-mont f-16">{$item->fdate_add}</td>
+                            <td class="text-danger f-mont f-16">{$item->hospital_name}</td>
                             <td class="text-danger f-mont f-16">{$item->department_name}</td>
                             <td>{$item->checklist_category}</td>
                             {if $item->situation eq 1 && $item->checklist_of_user eq $item->submit_checklist_of_user}

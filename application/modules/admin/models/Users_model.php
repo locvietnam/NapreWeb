@@ -21,6 +21,7 @@ class Users_model extends MY_Model
     public  $_pathThumb  = '';
     public  $_pathLogo   = '';
     private $_admin = 'pp_user';
+    private $table_s = 'pp_sessions';
     
     function table_admin(){
         return $this->_admin; 
@@ -39,8 +40,9 @@ class Users_model extends MY_Model
 	
 	function getAll($cond='') { 
         $sql = "
-		SELECT a.* FROM {$this->table_admin()} as a 
-		LEFT JOIN $this->table_a_d as b ON b.user_id = a.user_id
+		SELECT a.*,s.last_activity FROM {$this->table_admin()} as a 
+		LEFT JOIN $this->table_a_d as b ON b.user_id = a.user_id 
+        LEFT JOIN $this->table_s as s ON a.user_id = s.user_id
 		$cond
 		";
         return $this->db->query($sql)->result();
@@ -58,14 +60,20 @@ class Users_model extends MY_Model
         
         $limit = ($num > 0 ) ? "LIMIT $offset, $num" : "";
         
-        $sql = "SELECT c.*, d.role_name FROM {$this->table_admin()} AS c LEFT JOIN $this->table_role AS d ON  d.role_id = c.role_id $cond ORDER BY date_add DESC $limit";
+        $sql = "SELECT c.*, d.role_name,s.last_activity FROM {$this->table_admin()} AS c 
+        LEFT JOIN $this->table_role AS d ON  d.role_id = c.role_id 
+        LEFT JOIN $this->table_s AS s ON c.user_id = s.user_id
+        $cond ORDER BY date_add DESC $limit";
 
         return $this->db->query($sql)->result_array(); 
     }
     
     
     function countItems($cond=''){ 
-       $sql = "SELECT c.user_id FROM {$this->table_admin()} AS c LEFT JOIN $this->table_role AS d ON  d.role_id = c.role_id $cond ";
+       $sql = "SELECT c.user_id FROM {$this->table_admin()} AS c 
+       LEFT JOIN $this->table_role AS d ON  d.role_id = c.role_id 
+       LEFT JOIN $this->table_s as s ON c.user_id = s.user_id
+       $cond ";
         return $this->db->query($sql)->num_rows();  
     }
     

@@ -29,6 +29,7 @@
                                 <tr style="background:#fafafa">
                                     <th width="3%">
 									 </th>
+                                     <th style="min-width: 150px;">{$lable.hospital}</th>
                                     <th width="35%"><b style="text-transform: uppercase;">{$lable.users}</b></td>
                                     <th width="20%"><b style="text-transform: uppercase;">{$lable.infomation}</b></td>
                                     <th style="text-align: center;text-transform: uppercase;"><b>{$lable.action}</b>
@@ -40,6 +41,7 @@
                                     <tr>
                                         <td style="vertical-align: middle;">
 										</td>
+                                        <td>{$item.hospital_name}</td>
                                         <td style="vertical-align: middle;">
                                             <p style="font-family: sans-serif;"><strong>{$item.user_fullname}</strong></p>
 

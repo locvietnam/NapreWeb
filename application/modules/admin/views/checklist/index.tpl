@@ -70,7 +70,7 @@
                        		{/if}
                             
                             {if $user_data->role_id <= 5}
-                                <a style="cursor:pointer; float:right;" data-message="{$lable.confirm_del}" class="delete-checklist-of-manager" data-id="{$itemPa.checklist_category_id}">
+                                <a style="cursor:pointer; float:right;" data-message="{$lable.confirm_del}?" class="delete-checklist-of-manager" data-id="{$itemPa.checklist_category_id}">
                                     <img src="{$base_tlp_admin}/img/icon/icon-delete.png">
                                 </a>
                             {/if}
@@ -112,7 +112,7 @@
                        		{/if}
                             
                             {if $user_data->role_id <= 5}
-                                <a style="cursor:pointer; float:right;" data-message="{$lable.confirm_del}" class="delete-checklist-of-manager" data-id="{$item.checklist_category_id}">
+                                <a style="cursor:pointer; float:right;" data-message="{$lable.confirm_del}?" class="delete-checklist-of-manager" data-id="{$item.checklist_category_id}">
                                     <img src="{$base_tlp_admin}/img/icon/icon-delete.png">
                                 </a>
                             {/if}

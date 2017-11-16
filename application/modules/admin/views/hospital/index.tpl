@@ -41,16 +41,18 @@
                             <tbody>
                                 <tr style="background:#fafafa">
                                     <th width="3%">
+                                    ID
 									 </th>
                                     <th width="35%"><b style="text-transform: uppercase;">{$lable.hospital}</b></td>
                                     <th width="15%" style="text-align: center;text-transform: uppercase;"><b>{$lable.action}</b>
                                     </td>
                                 </tr>
                                 {if $list}
-                                {foreach from=$list item=item}
+                                {foreach from=$list key=k item=item}
                                 
                                     <tr>
                                         <td style="vertical-align: middle;">
+                                        {$item.hospital_id}
 										</td>
                                         <td style="vertical-align: middle;">
                                             <p style="font-family: sans-serif;"><strong>{$item.hospital_name}</strong></p>
@@ -61,7 +63,7 @@
                                             {if $user_data->role_id <= 3}
                                             
                                                 {if $item.avail eq 0 }
-                                                <a class="btn delhospital cursor" data-message="{$lable.confirm_del}" data-id = "{$item.hospital_id}" title="Delete">
+                                                <a class="btn delhospital cursor" data-message="{$lable.confirm_del}?" data-id = "{$item.hospital_id}" title="Delete">
                                                     <img src="{$base_tlp_admin}/img/icon/icon-delete.png">                                                
                                                 </a>
                                                 <a class="btn reset-user-assign" href="{$base_url_admin}/hospital/reset-hospital.html?id={$item.hospital_id}" title="Reseter">
@@ -71,7 +73,7 @@
                                                 <a class="btn btn-danger lang_values" href="{$base_url_admin}/hospital/add.html?id={$item.hospital_id}" title="Edit" style="border-radius:50%; padding:4px 7px;">
                                                     <i class="fa fa-edit"></i>
                                                 </a>
-                                                <a class="btn delhospital cursor" data-message="{$lable.confirm_del}" data-id = "{$item.hospital_id}" title="Delete">
+                                                <a class="btn delhospital cursor" data-message="{$lable.confirm_del}?" data-id = "{$item.hospital_id}" title="Delete">
                                                 <i class="fa fa-trash"></i>
                                                 </a>                                                
                                                 {/if}

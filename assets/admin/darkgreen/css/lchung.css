@@ -50,3 +50,8 @@ label.disabled{
 	border-radius:50%;
 	color:#fff;
 }
+.btn-nbox-shadow:active{
+    -webkit-box-shadow: inset 0 0px 0px rgba(255, 255, 255, 255);
+    -moz-box-shadow: inset 0 0px 0px rgba(255, 255, 255, 255);
+    box-shadow: inset 0 0px 0px rgba(255, 255, 255, 255);
+}

@@ -32,7 +32,7 @@
                             {$v->date_add}
                             </td>
                             <td style="width:120px;">
-                            <a class="hoverJS delete-banner" data-message="{$lable.confirm_del}" data-id="{$v->id}" data-filecurent="{$v->file_img}" href="javascript:void(0);" title="Delete">
+                            <a class="hoverJS delete-banner" data-message="{$lable.confirm_del}?" data-id="{$v->id}" data-filecurent="{$v->file_img}" href="javascript:void(0);" title="Delete">
                                 <img src="{$base_tlp_admin}/img/icon/icon-delete.png">
                             </a>
                             <a class="btn btn-danger" href="{$base_url_admin}/banner/add.html?id={$v->id}" title="Edit" style="border-radius:50%; padding:4px 7px;">

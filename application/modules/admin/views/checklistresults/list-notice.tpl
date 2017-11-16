@@ -45,7 +45,7 @@
                 	{/if}
 				{/foreach}
                 {if isset($smarty.get.submitid)}
-                <div class="form-group">            
+                <div class="form-group" style="display:none;">            
                     <label class="col-sm-1 control-label">
                     {$lable.reportchecklist_day_of_month}
                     </label>
@@ -53,7 +53,7 @@
                         <input class="form-control" placeholder="Select Date add" name="data[date_add]" value="{if isset($smarty.get.finddate)}{$smarty.get.finddate}{/if}" />
                     </div>
                 </div>
-                <div class="form-group">            
+                <div class="form-group" style="display:none;">            
                     <label class="col-sm-1 control-label">
                     {$lable.emoticon}
                     </label>

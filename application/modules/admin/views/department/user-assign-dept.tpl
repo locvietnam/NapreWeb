@@ -70,14 +70,14 @@
                                         <td style="text-align: center;vertical-align: middle; min-width:7%;">
                                             {if $user_data->role_id <= 3}
                                             	{if $item.avail eq 0 }
-                                                <a class="btn deluserassigndept cursor" data-message="{$lable.confirm_del}" data-id = "{$item.id}" title="{$lable.delete}">
+                                                <a class="btn deluserassigndept cursor" data-message="{$lable.confirm_del}?" data-id = "{$item.id}" title="{$lable.delete}">
                                                 	<img src="{$base_tlp_admin}/img/icon/icon-delete.png">                                                
                                                 </a>
                                                 <!--<a class="btn reset-user-assign" href="{$base_url_admin}/department/reset-user-assign.html?id={$item.id}" title="Reseter">
                                                 <i class="fa fa-reply"></i>
                                                 </a>-->
                                                 {else}
-                                                <a class="btn deluserassigndept cursor" data-message="{$lable.confirm_del}" data-id = "{$item.id}" title="{$lable.trash}">
+                                                <a class="btn deluserassigndept cursor" data-message="{$lable.confirm_del}?" data-id = "{$item.id}" title="{$lable.trash}">
                                                 <i class="fa fa-trash"></i>
                                                 </a>                                                
                                                 {/if}

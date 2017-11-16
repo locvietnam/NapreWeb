@@ -41,9 +41,11 @@
                             <tbody>
                                 <tr style="background:#fafafa">
                                     <th width="3%">
+                                    ID
 									 </th>
                                     <th width="35%"><b style="text-transform: uppercase;">{$lable.users}</b></td>
                                     <th width="20%"><b style="text-transform: uppercase;">{$lable.infomation}</b></td>
+                                    <th>{$lable.last_login}</th>
                                     <th width="15%" style="text-align: center;text-transform: uppercase;"><b>{$lable.action}</b>
                                     </td>
                                 </tr>
@@ -52,6 +54,7 @@
                                 
                                     <tr>
                                         <td style="vertical-align: middle;">
+                                        {$item.user_id}
 										</td>
                                         <td style="vertical-align: middle;">
                                             <p style="font-family: sans-serif;"><strong>{$item.user_fullname}</strong></p>
@@ -62,11 +65,12 @@
                                             <div><u>{$lable.admin_role}</u> : {$item.role_name}</div>
                                             <div><u>{$lable.date_add}</u> : {$item.date_add}</div>
                                         </td>
+                                        <td>{if $item.last_activity != ''}{date('d/m/Y G:sa', $item.last_activity)}{/if}</td>
                                         <td style="text-align: center;vertical-align: middle; min-width:5%;">
                                             {if $user_data->role_id <= 3}
                                             
                                                 {if $item.avail eq 0 }
-                                                <a class="btn deluser cursor" data-message="{$lable.confirm_del}" data-id = "{$item.user_id}" title="Delete">
+                                                <a class="btn deluser cursor" data-message="{$lable.confirm_del}?" data-id = "{$item.user_id}" title="Delete">
                                                     <img src="{$base_tlp_admin}/img/icon/icon-delete.png">                                                
                                                 </a>
                                                 <a class="btn reset-user-assign" href="{$base_url_admin}/users/reset-user.html?id={$item.user_id}" title="Reseter">
@@ -76,7 +80,7 @@
                                                 <a class="btn btn-danger lang_values" href="{$base_url_admin}/users/add.html?id={$item.user_id}" title="Edit" style="border-radius:50%; padding:4px 7px;">
                                                     <i class="fa fa-edit"></i>
                                                 </a>
-                                                <a class="btn deluser cursor" data-message="{$lable.confirm_del}" data-id = "{$item.user_id}" title="Delete">
+                                                <a class="btn deluser cursor" data-message="{$lable.confirm_del}?" data-id = "{$item.user_id}" title="Delete">
                                                 <i class="fa fa-trash"></i>
                                                 </a>                                                
                                                 {/if}

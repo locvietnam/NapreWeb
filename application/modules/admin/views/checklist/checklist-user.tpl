@@ -71,7 +71,7 @@
                                                     <i class="fa fa-edit"></i>
                                            	</a>
                                             	{if $item->count_staff > 0 }
-                                                    <a style="cursor:pointer;" data-message="{$lable.confirm_del}" class="delete-checklist-of-staff" data-id="{$item->checklist_category_id}">
+                                                    <a style="cursor:pointer;" data-message="{$lable.confirm_del}?" class="delete-checklist-of-staff" data-id="{$item->checklist_category_id}">
                                                         <img src="{$base_tlp_admin}/img/icon/icon-delete.png">
                                                     </a>
                                             	{/if}

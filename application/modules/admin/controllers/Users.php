@@ -95,7 +95,7 @@ class Users extends MY_Controller {
 
         $items = $this->users_model->getItems($cond, $per_page, $start);
         // pre($items); 
-
+        //print_r($items);die;
         $this->_data['action_url'] = admin_url($this->_control);
         $this->_data['action_url_add'] = admin_url($this->_control . '/add.html');
         $this->_data['action_url_delete_multi'] = admin_url($this->_control . '/deletemulti.html');

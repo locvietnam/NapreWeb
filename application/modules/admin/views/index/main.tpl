@@ -15,7 +15,7 @@
                 <div class="box-body">
                     <p class="time text-success">{$item.ftime}
                     {if $item.user_id_received eq $user_data->user_id}
-                    	<a style="cursor:pointer; float:right;" onclick="deleteMessage(this, '{$item.id}','{$lable.confirm_del}');" >
+                    	<a style="cursor:pointer; float:right;" onclick="deleteMessage(this, '{$item.id}','{$lable.confirm_del}?');" >
                         <img src="{$base_tlp_admin}/img/icon/icon-delete.png">
                         </a>
                     {/if}</p>

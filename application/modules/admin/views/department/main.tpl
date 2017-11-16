@@ -66,12 +66,12 @@
                             <td>
                             {$v->last_update}
                             </td>
-                            <td style="width:120px;">
-                            <a class="hoverJS delete-dep" data-message="{$lable.confirm_del}" data-id="{$v->department_id}" href="javascript:void(0);" title="{$lable.delete}">
-                                <img src="{$base_tlp_admin}/img/icon/icon-delete.png">
-                            </a>
-                            <a class="btn btn-danger department-edit" data-id="{$v->department_id}" href="javascript:void(0);" title="Edit" style="border-radius:50%; padding:4px 7px;">
+                            <td style="width:90px;">                            
+                            <a class="btn btn-danger department-edit" data-id="{$v->department_id}" href="javascript:void(0);" title="Edit" style="border-radius:50%; padding:4px 7px; float:left">
                                 <i class="fa fa-edit"></i>
+                            </a>
+                            <a style="float:right" class="hoverJS delete-dep" data-message="{$lable.confirm_del} ({$v->department_name}) of ({$v->hospital_name})?" data-id="{$v->department_id}" href="javascript:void(0);" title="{$lable.delete}">
+                                <i class="fa fa-trash"></i>
                             </a>
                             </td>
                         </tr>

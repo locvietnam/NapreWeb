@@ -44,7 +44,7 @@
 		var current_method  = "{$current_method}";
 		
 		var require_input_field	= "{$lable.require_input_field|stripslashes}";
-		var message_confirm_del = "{$lable.confirm_del}";
+		var message_confirm_del = "{$lable.confirm_del}?";
 	
     </script>
 </head>

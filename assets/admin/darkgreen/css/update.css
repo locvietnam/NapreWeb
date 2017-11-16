@@ -1,13 +1,13 @@
-/**
-*   Filename    : Update CSS
-*   Author      : Tuan Nguyen
-*   Author URL  : http://tuannguyenblog.info
-*   Date Create : 200617
-*/
-.cursor{
-	cursor: pointer;
-}
-.box.box-category .category-name input{
-    font-weight: bold;
-    padding: 0 5px;
-}
+/**
+*   Filename    : Update CSS
+*   Author      : Tuan Nguyen
+*   Author URL  : http://tuannguyenblog.info
+*   Date Create : 200617
+*/
+.cursor{
+	cursor: pointer;
+}
+.box.box-category .category-name input{
+    font-weight: bold;
+    padding: 0 5px;
+}

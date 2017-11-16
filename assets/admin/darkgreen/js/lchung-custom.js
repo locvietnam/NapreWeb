@@ -11,10 +11,14 @@ $(document).ready(function () {
     //department-edit
     $('.department-edit').click(function (e) {
         $('.department-list label').css({'display': 'block'});
-        $('.department-list input').css({'display': 'none'});
+        $('.department-list input').css({'display': 'none'});        
+        $('.department-list select').css({'display': 'none'});
+        
         var id = $(this).data('id');
         $('.lab-' + id).css({'display': 'none'});
         $('#' + id).css({'display': 'block'});
+        $('.labh-' + id).css({'display': 'none'});
+        $('#hospital_id' + id).css({'display': 'block'});
     });
     //End department-edit
 
@@ -70,13 +74,14 @@ $(document).ready(function () {
         var action = $(this).attr('action');
         var Url = base_url_admin + action;
         var name = $(this).find('#name').val();
-        if (name == '') {
+        var hospital_id = $(this).find('#hospital_id').val();
+        if (name == '' || hospital_id == '') {
             alert('Please enter the fields has (*)');
         } else {
             $.ajax({
                 url: action,
                 type: 'POST',
-                data: {'department_name': name},
+                data: {'department_name': name, 'hospital_id': hospital_id},
                 //this is the dataType    
                 dataType: 'json',
                 success: function (results) {
@@ -502,19 +507,169 @@ $(document).ready(function () {
     $("#freportchecklist #hospital_id").select2({
         //templateSelection: getDepAjx
     }).on("change", function (e) {
-        getDepAjx(this.value)
+        getDepAjx(this.value, '');
          // var str = $("#s2id_search_code .select2-choice span").text();
          // DOSelectAjaxProd(e.val, str);
     });
     
+    $("#fchecklistresults #hospital_id").select2({
+        //templateSelection: getDepAjx
+    }).on("change", function (e) {
+        getDepAjx(this.value, '<option value="">---</option>');
+    });
+    
+    $("#fnewchecklistresults #department_id").select2({
+        //templateSelection: getDepAjx
+    }).on("change", function (e) {
+        getUserAjx(this.value, '<option value="">---</option>');
+    });
+    
+    
+    
     $("#freportchecklist #department_id").select2();
     $("#freportchecklist #year").select2();
     $("#freportchecklist #month").select2();
+    $("#fchecklistresults #department_id").select2();
+    $("#fchecklistresults #year").select2();
+    $("#fchecklistresults #month").select2();
+    $("#fchecklistresults #day").select2();
+    
+    
+    $("#fnewchecklistresults #department_id").select2();
+    $("#fnewchecklistresults #year").select2();
+    $("#fnewchecklistresults #month").select2();
+    //$("#fnewchecklistresults #day").select2();
+    $("#fnewchecklistresults #staffid").select2();
+    
+    $("#fnewchecklistresults #staff_id").select2();
+    
     
     //get default
     var vhospital_id = $("#freportchecklist #hospital_id option:selected").val();
     ///getDepAjx(vhospital_id);
+    /*
+    $('#ffinddept').submit(function(){
+        var iddept = $('.list-inline.list-team .active .find-dept').data("iddept");
+        $(this).find('#dept').val(iddept);
+        setTimeout(function(){
+            
+        },200);
+    });
+    */
+    /*
+    $('.find-dept').click(function(){
+        var iddept = $(this).data("iddept");
+        $('#ffinddept').find('#dept').val(iddept);
+        $('#ffinddept').submit();
+        return false;
+    });
+    */
+   
+   $("#fnewchecklistresults").submit(function(){
+       
+        if( $("#fnewchecklistresults #month option:selected").val() == '' ){
+            alert($("#fnewchecklistresults").data('required_day_month_year'));
+            return false;
+        }
+        ///if( $("#fnewchecklistresults #staff_id option:selected").val() == '' ){
+        ///    alert($("#fnewchecklistresults").data('requiredstaff'));
+        //    return false;
+        //}
+        
+        var v = $('#fnewchecklistresults #day option:selected').val();
+        var vhospital_id = $("#fnewchecklistresults #hospital_id option:selected").val();
+        if( v == '' && vhospital_id == ''){
+            alert($('#fnewchecklistresults').data('requireddayorhospital'));
+            return false;
+        }
+        
+    });
     
+   $('#fdata #hospital_id').change(function(){
+       var hospital_id = $(this).val();
+       $('#checklist_manager_id option').empty();
+       $.ajax({
+            url: base_url_admin + '/checklist/getdept',
+            type: 'GET',
+            data: {'hospital_id': hospital_id},
+            //this is the dataType    
+            dataType: 'json',
+            success: function (results) {
+                $('#checklist_department_id').html(results.data);
+            }
+        });
+   });
+   
+   $("#fnewchecklistresults #hospital_id").select2({
+        //templateSelection: getDepAjx
+    }).on("change", function (e) {
+        getDepAjx(this.value, '<option value="">---</option>');
+    });
+    
+    $('input[name="date_add"]').datepicker({
+        dateFormat: "yy/mm/dd",
+        onSelect: function (dateText) {
+            ///display("Selected date: " + dateText + "; input's current value: " + this.value);
+        }
+    });
+    
+    $('input[name="data[date_add]"]').datepicker({
+        dateFormat: "yy-mm-dd",
+        onSelect: function (dateText) {
+            ///display("Selected date: " + dateText + "; input's current value: " + this.value);
+        }
+    });
+    
+    $('#fupdatechecklistresults').submit(function(){
+       var valArr = [];
+        $("#fupdatechecklistresults label.icon-check").each(function() {
+            if($(this).hasClass('active')){
+                var f = $(this).attr('for');
+                valArr.push($('#'+f).val());
+            }                
+        });
+        $('#fupdatechecklistresults #submit_checklist_id').val(valArr.toString());
+        setTimeout(function(){
+            var href = document.location.href;
+            $.post(href, $('#fupdatechecklistresults').serialize(), function(data) {
+                if( data.trim() == "no_replace"){
+                    document.location.reload(true);
+                }
+                else{
+                    var shref = href.replace("submitid=0", "submitid="+data);
+                    document.location.href = shref;//.reload(true);
+                }
+            });
+        }, 200);
+        return false;
+    });
+    
+    $('.emoticon').click(function(){
+        $('.emoticon').removeClass('selectd');
+        $(this).addClass('selectd');
+        $('#emoticon').val($(this).data('val'));
+    });
+    
+    //rstrash
+    $('.rstrash').click(function(){
+        if (confirm(message_confirm_del)) {
+            var user_id = $(this).data('user_id');
+            var submit_id = $(this).data('submit_id');
+            //var checklist_id = $(this).data('checklist_id');
+            $.ajax({
+                url: base_url_admin + '/checklistresults/delete',
+                type: 'GET',
+                data: {'userid': user_id, 'submitid': submit_id},
+                //this is the dataType    
+                dataType: 'json',
+                success: function (results) {                    
+                    document.location.reload( true );
+                }
+            });
+        }
+    });
+    
+   
 });
 
 function update(obj, e) {
@@ -547,19 +702,45 @@ function updateDepartment(obj, e) {
         var value = $(obj).val();
         $('.lab-' + id).css({'display': 'block'}).text(value);
         $('#' + id).css({'display': 'none'});
-
+        var objs = $('#hospital_id' + id +" option:selected");
+        var hospital_id = objs.val();
+        $('.labh-' + id).css({'display': 'block'}).text(objs.text());
+        $('#hospital_id' + id).css({'display': 'none'});
+        
         $.ajax({
             url: base_url_admin + '/department/update',
             type: 'POST',
-            data: {'department_name': value, 'department_id': id},
+            data: {'department_name': value, 'department_id': id, 'hospital_id': hospital_id},
             //this is the dataType    
             dataType: 'json',
             success: function (results) {
                 ///document.location.reload( true );
             }
         });
-
     }
+}
+
+function updateDepartmentH(obj, e) {
+    
+    var id = $(obj).attr('id').replace("hospital_id", "");
+    var value = $('#' + id).val();
+    $('.lab-' + id).css({'display': 'block'}).text(value);
+    $('#' + id).css({'display': 'none'});
+    var objs = $('#hospital_id' + id +" option:selected");
+    var hospital_id = objs.val();
+    $('.labh-' + id).css({'display': 'block'}).text(objs.text());
+    $('#hospital_id' + id).css({'display': 'none'});
+
+    $.ajax({
+        url: base_url_admin + '/department/update',
+        type: 'POST',
+        data: {'department_name': value, 'department_id': id, 'hospital_id': hospital_id},
+        //this is the dataType    
+        dataType: 'json',
+        success: function (results) {
+            ///document.location.reload( true );
+        }
+    });
 }
 
 function sub_categories_add_more() {
@@ -665,7 +846,7 @@ function deleteMessage(obj, id, message) {
 //End deleteMessage
 
 //getDepAjx
-function getDepAjx( id ){
+function getDepAjx( id, optionMore ){
     $.ajax({
         url: base_url_admin + '/get-department-ajx.html',
         type: 'GET',
@@ -673,8 +854,21 @@ function getDepAjx( id ){
         //this is the dataType    
         dataType: 'json',
         success: function (results) {
-            $('#department_id').html(results.data)
+            $('#department_id').html( optionMore + results.data)
         }
     });
 }
 
+//getDepAjx
+function getUserAjx( id, optionMore ){
+    $.ajax({
+        url: base_url_admin + '/get-user-ajax.html',
+        type: 'GET',
+        data: {'department_id': id},
+        //this is the dataType    
+        dataType: 'json',
+        success: function (results) {
+            $('#staff_id').html( optionMore + results.data)
+        }
+    });
+}

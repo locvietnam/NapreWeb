@@ -57,10 +57,11 @@ class Checklistresults extends MY_Controller{
         $yearValue      = (int)$this->input->get('year');
         $monthValue     = $this->input->get('month');
         $dayValue     = $this->input->get('day');
-        
+        if(!isset($_GET['day'])){
+            $dayValue     = date('d');
+        }
         if( $monthValue == '' )
             $monthValue = date('m');
-        
 		
 		$userLoging = $this->_data['user_data'];
 		if( $userLoging->role_id == 5 ){//la nhom manager moi duoc update manager_viewed of table pp_submit
@@ -106,10 +107,13 @@ class Checklistresults extends MY_Controller{
         if( $department_id > 0 ){
             $where .= " AND c.department_id = $department_id ";
         }
+        if( $hospital_id > 0 ){
+            $where .= " AND d.hospital_id = $hospital_id ";
+        }
         //echo $finddate;die;
 		$list = $this->checklistresults_model->getDepartmentOfChecklistCategory( $where, $whereSub );		
 		foreach ( $list as $item ) {
-			
+			$item->fdate_add = date('d/m/Y', strtotime($item->date_add));
 			$inUser_id = array();
 			$inSubmit_id = array();
 			$where = " Where c.submit_id = $item->submit_id AND a.checklist_category_id = $item->checklist_category_id AND DATE(c.date_add) = DATE('" . $finddate . "')";
@@ -247,6 +251,7 @@ class Checklistresults extends MY_Controller{
         $yearValue      = ((int)$this->input->get('year')) ? $this->input->get('year') : date('Y');
         $monthValue     = ($this->input->get('month')) ? $this->input->get('month') : date('m');
         $dayValue     = $this->input->get('day');//) ? $this->input->get('day') : date('d');
+        $iday = 1;
         $staff_id     = (int)$this->input->get('staff_id');        
         $is_whereMonth = 0;
         if( $monthValue != '' && $dayValue == '' ){
@@ -260,6 +265,10 @@ class Checklistresults extends MY_Controller{
             $monthValue = date('m');
         
         $maxDays =  date('t', strtotime( $yearValue . "-" . $monthValue . "-01"));
+        if($dayValue > 0 ){
+            $iday = $dayValue;
+            $maxDays = $dayValue;
+        }
 		$data = array();
 		$dataChecklist = array();
 		$submitChecklist = array();
@@ -281,12 +290,19 @@ class Checklistresults extends MY_Controller{
                 cc.checklist_category_id,
                 cc.checklist_category as title,
                 u.user_id,
-                u.user_fullname
+                u.user_fullname,
+                ( 
+				SELECT count(cl.checklist_id) 
+                    FROM pp_checklist as cl WHERE 
+                    cl.checklist_category_id = cc.checklist_category_id GROUP BY cl.checklist_category_id
+                ) as checklist_of_user
                 FROM `pp_checklist_category` AS cc 
                 INNER JOIN `pp_checklist_category_users` AS cu ON cu.checklist_category_id = cc.parent_category_id 
                 INNER JOIN `pp_user` AS u ON u.user_id = cu.user_id 
-                WHERE cc.department_id > 0 ";        
-        $sql .= " AND cu.user_id = $staff_id ";
+                WHERE cc.department_id > 0 ";  
+        if((int)$staff_id > 0 )
+            $sql .= " AND cu.user_id = $staff_id ";
+        if((int)$department_id > 0 )
         $sql .= " AND cc.department_id = $department_id ";
         
         //echo $sql;
@@ -294,16 +310,19 @@ class Checklistresults extends MY_Controller{
         $query = $this->db->query($sql);
         $dataCu = $query->result_array();
         //die;
-        for($i = 1; $i<=$maxDays; $i++){
+        for($i = $iday; $i<=$maxDays; $i++){
             $d = ($i >= 10 ) ? $i : '0' . $i;
             $finddates = $yearValue . '-' . $monthValue . '-' . $d;    
             //echo $finddates."\n";
             foreach ( $dataCu as $item ){
                 $checklist_category_id = $item['checklist_category_id'];
                 $user_id = $item['user_id'];
+                $item['situation'] = 1;
+                $item['fdate_add'] = date('Y月m月d日', strtotime( $finddates ) );
                 $sqlSub = "SELECT 
                             s.submit_id, s.emotion_icon, COUNT(s.submit_id) as is_submit,
-                            DATE_FORMAT(s.date_add,'%d/%m/%Y') AS date_add
+                            DATE_FORMAT(s.date_add,'%d/%m/%Y') AS sfdate_add,
+                            s.date_add
                             FROM `pp_submit` AS s 
                             INNER JOIN `pp_submit_checklist` AS sc ON s.submit_id = sc.submit_id
                             INNER JOIN `pp_checklist` AS c ON c.checklist_id = sc.checklist_id
@@ -317,12 +336,34 @@ class Checklistresults extends MY_Controller{
 
                 $querySub = $this->db->query($sqlSub);
                 $dataSub = $querySub->result();
+                
+                
+                //lay tất cả Submit checklist của user
+				$where = " Where b.checklist_category_id =$checklist_category_id AND c.user_id = $user_id AND DATE(c.date_add) = DATE('" . $finddates . "') ";
+				$Submitd = $this->checklistresults_model->getStatusSituation( $where );
+				$cSubmitd = count( $Submitd );
+				$item['submit_checklist_of_user'] = $cSubmitd;
+				if( $item['checklist_of_user'] >  $cSubmitd ){//neu tong so checklist_of_user > hon nhung user submit thi la chua hoan thanh khg can phai foreach phia duoi nua
+					$item['situation'] = 0;//chua hoan thanh cong viec
+				}
+				else {//truong hop con user submit het nhung kiem tra tinh trang hoan thanh chua
+					foreach( $Submitd as $v ){
+						if( $v->checklist_checked == 0 ){
+							$item['situation'] = 0;//chua hoan thanh cong viec
+							//break;
+						}
+					}
+				}
+                //print_r($item);die;
                 //print_r( $dataSub );
                 if( $dataSub ){
                     $item['submit_id'] = $dataSub[0]->submit_id;
                     $item['emotion_icon'] = $dataSub[0]->emotion_icon;
                     $item['is_submit'] = 1;
                     $item['date_add'] = $dataSub[0]->date_add;
+                    $strTotime = strtotime($dataSub[0]->date_add);
+                    $item['fdate_add'] = date('Y月m月d日', $strTotime);// . '月' . date('m', $strTotime) . '月'. date('d', $strTotime) . '日';
+                
                     $submit_id = $dataSub[0]->submit_id;
                     $s = "SELECT COUNT(scm.submit_id) as is_comment FROM `pp_submit_comments` AS scm 
                             WHERE scm.submit_id = $submit_id  GROUP BY scm.submit_id";
@@ -342,6 +383,7 @@ class Checklistresults extends MY_Controller{
                     $item['date_add'] = '';                    
                     $item['is_comment'] = 0;
                 }
+                
                 $item['finddates'] = $finddates;
                 $data[] = $item;
             }//End foreach
@@ -370,8 +412,9 @@ class Checklistresults extends MY_Controller{
             $strM .= '<option ' . $selected . ' value="' . $iStr . '">' . $iStr . '</option>';
         }
         
-        $strD = '<option value="">---</option>';         
-        for( $i = 1; $i <= $maxDays; $i++ ){
+        $strD = '<option value="">---</option>'; 
+        $maxDayNow =  date('t', strtotime( $yearValue . "-" . $monthValue . "-01"));        
+        for( $i = 1; $i <= $maxDayNow; $i++ ){
             $selected = '';
             $iStr = ($i < 10 ) ? '0' . $i : $i;            
             if( $dayValue == $iStr ){
@@ -437,6 +480,20 @@ class Checklistresults extends MY_Controller{
         
     }
     
+    public function delete(){
+        
+        if( $this->_data['user_data']->role_id <= 5 ){			
+            $submitid  = (int)$this->input->get('submitid'); 
+            if( $submitid > 0 ) {
+                $this->db->delete('pp_submit_comments', array('submit_id' => $submitid) );
+                $this->db->delete('pp_submit_checklist', array('submit_id' => $submitid) );
+                $this->db->delete('pp_submit', array('submit_id' => $submitid) );        
+            }
+        }
+        echo json_encode( array('data' => 1 ) );
+        die;
+    }
+    
 	public function listnotice(){
 		$is_pudate = 1;
         if( $this->input->post() ){
@@ -497,8 +554,11 @@ class Checklistresults extends MY_Controller{
 		$this->_data['finddate'] = $finddate;
 		
 		//lay cap tra
-		$cond = ' WHERE checklist_category_id IN(' . $checklistcategoryid . ') AND parent_category_id = 0 ';
-		$listArr = $this->checklist_model->getallCate( $cond );
+        $listArr = array();
+        if(!empty($checklistcategoryid)) {
+            $cond = ' WHERE checklist_category_id IN(' . $checklistcategoryid . ') AND parent_category_id = 0 ';
+            $listArr = $this->checklist_model->getallCate( $cond );
+        }
 		$list = array();
 		foreach ( $listArr as $itemP ) {
 			

@@ -17,6 +17,7 @@ class Usermanagerdept_model extends MY_Model
     public $table_role = 'pp_user_role';
     public $table_user = 'pp_user';
 	public $table_department = 'pp_department';
+    public $table_h = 'pp_hospitals';
 	
 	/**
      * 
@@ -47,11 +48,12 @@ class Usermanagerdept_model extends MY_Model
         
         $limit = ($num > 0 ) ? "LIMIT $offset, $num" : "";
         
-        $sql = "SELECT b.*, c.role_name,d.department_name,a.manager_id,a.department_id 
+        $sql = "SELECT b.*, c.role_name,d.department_name,a.manager_id,a.department_id,h.hospital_name 
 		FROM {$this->table} AS a
 		LEFT JOIN $this->table_user AS b ON a.manager_id = b.user_id 
 		LEFT JOIN $this->table_role AS c ON c.role_id = b.role_id 
 		INNER JOIN $this->table_department AS d ON a.department_id = d.department_id 
+        INNER JOIN $this->table_h as h ON d.hospital_id = h.hospital_id 
 		$cond ORDER BY b.user_fullname ASC $limit";
                 
         return $this->db->query($sql)->result_array(); 

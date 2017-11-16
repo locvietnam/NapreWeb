@@ -163,6 +163,7 @@ class Department extends MY_Controller{
 		$start = ($offset > 0) ? (($offset - 1) * $per_page) : $offset;
 		
 		$list = $this->usermanagerdept_model->getItems($cond, $per_page, $start); 
+        //print_r($list);die;
 		$this->_data['list'] = $list; 
 		
 		$this->_data['content'] = 'department/user-manager-dep';

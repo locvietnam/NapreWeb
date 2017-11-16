@@ -50,7 +50,7 @@
                                         <td style="text-align: center;vertical-align: middle; min-width:5%;">
                                             
                                             {if $user_data->role_id <= 3}
-                                            <a class="delusermanagerdep" data-message="{$lable.confirm_del}" data-managerid = "{$item.manager_id}" data-departmentid="{$item.department_id}" title="Delete">
+                                            <a class="delusermanagerdep" data-message="{$lable.confirm_del}?" data-managerid = "{$item.manager_id}" data-departmentid="{$item.department_id}" title="Delete">
                                                 <img src="{$base_tlp_admin}/img/icon/icon-delete.png">
                                             </a>
                                             {/if}
