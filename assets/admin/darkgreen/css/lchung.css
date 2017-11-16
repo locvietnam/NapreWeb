@@ -1,0 +1,52 @@
+/* CSS Document */
+.dropdown-menu{
+	background-color:#46466a;
+	border:1px solid #3f3f61;
+}
+select.form-control{
+	padding-top:1px;
+}
+
+.error.red{
+	color:red;
+}
+
+.pad-left-0{
+	padding-left:0px;
+}
+.p-r-0{
+	padding-right:0px;
+}
+
+input[type=checkbox][disabled] + label {
+    color: #ccc;
+}
+
+input[type="checkbox"]:disabled + label:before {
+    border-color: #eee;
+    color: #ccc;
+    background: linear-gradient(to top, #e6e6e6 0px, #fff 100%) repeat scroll 0 0 rgba(0, 0, 0, 0);
+}
+
+/*input[type="checkbox"]:checked + label:before {
+    content: '✓';
+}*/
+
+label.disabled{
+	 border-color: #eee;
+    color: #ccc;
+    background: linear-gradient(to top, #e6e6e6 0px, #fff 100%) repeat scroll 0 0 rgba(0, 0, 0, 0);
+}
+/*label.label.disabled:before {
+    content: '✓';
+}*/
+.fa-trash, 
+.fa-trash-o{
+	font-size:32px;
+}
+.reset-user-assign{
+	background-color:#aa1f24;
+	padding:6px 8px;
+	border-radius:50%;
+	color:#fff;
+}
