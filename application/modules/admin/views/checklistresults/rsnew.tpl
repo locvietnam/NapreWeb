@@ -138,7 +138,7 @@
                                     {if $item.is_comment eq 0}
                                         <img src="{$base_tlp_admin}/img/icon/mat-3.png" alt="{$item.user_fullname}">
                                     {else}
-                                        <a href="{$base_url_admin}/comment.html?submitid={$item->submit_id}">
+                                        <a href="{$base_url_admin}/comment.html?submitid={$item.submit_id}">
                                         <img src="{$base_tlp_admin}/img/icon/mat-3-xanh.png" alt="{$item.user_fullname}">
                                         </a>
                                     {/if}

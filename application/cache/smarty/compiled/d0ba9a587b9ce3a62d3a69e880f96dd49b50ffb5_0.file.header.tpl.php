@@ -1,7 +1,7 @@
-<?php /* Smarty version 3.1.28-dev/21, created on 2017-10-03 08:05:10
+<?php /* Smarty version 3.1.28-dev/21, created on 2017-11-20 02:25:13
          compiled from "C:\xampp\htdocs\customer\aline\application\modules\admin\views\header.tpl" */ ?>
 <?php
-/*%%SmartyHeaderCode:1457259d32896163af9_19877748%%*/
+/*%%SmartyHeaderCode:256855a122ef96ea4f0_36752759%%*/
 if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
@@ -9,11 +9,11 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'd0ba9a587b9ce3a62d3a69e880f96dd49b50ffb5' => 
     array (
       0 => 'C:\\xampp\\htdocs\\customer\\aline\\application\\modules\\admin\\views\\header.tpl',
-      1 => 1506994555,
+      1 => 1511139950,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '1457259d32896163af9_19877748',
+  'nocache_hash' => '256855a122ef96ea4f0_36752759',
   'variables' => 
   array (
     'lable' => 0,
@@ -25,13 +25,13 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   ),
   'has_nocache_code' => false,
   'version' => '3.1.28-dev/21',
-  'unifunc' => 'content_59d328961a4bd9_18108795',
+  'unifunc' => 'content_5a122ef9723e93_96315694',
 ),false);
 /*/%%SmartyHeaderCode%%*/
-if ($_valid && !is_callable('content_59d328961a4bd9_18108795')) {
-function content_59d328961a4bd9_18108795 ($_smarty_tpl) {
+if ($_valid && !is_callable('content_5a122ef9723e93_96315694')) {
+function content_5a122ef9723e93_96315694 ($_smarty_tpl) {
 
-$_smarty_tpl->properties['nocache_hash'] = '1457259d32896163af9_19877748';
+$_smarty_tpl->properties['nocache_hash'] = '256855a122ef96ea4f0_36752759';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -102,7 +102,7 @@ $_smarty_tpl->properties['nocache_hash'] = '1457259d32896163af9_19877748';
 		var require_input_field	= "<?php echo stripslashes($_smarty_tpl->tpl_vars['lable']->value['require_input_field']);?>
 ";
 		var message_confirm_del = "<?php echo $_smarty_tpl->tpl_vars['lable']->value['confirm_del'];?>
-";
+?";
 	
     <?php echo '</script'; ?>
 >

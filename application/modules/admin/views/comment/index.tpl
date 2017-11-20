@@ -5,11 +5,13 @@
                      <!--<input type="text" name="datecomment" value="{$datecomment}" />-->
                      </li>
                     <li class="text-danger"><span class="icon-building"></span> {$dept->department_name}</li>
+                    <li>
+                    	
+                    </li>
                 </ul>
             </section>
 			
             <section class="content">
-            
             	{foreach from=$list item=item}
                 	{if $item.parent_id eq 0 }
                     <input type="hidden" name="id" value="{$item.id}" />

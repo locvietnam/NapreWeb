@@ -70,14 +70,39 @@ class Checklistresults_model extends MY_Model
              b.date_add,
              h.hospital_name
 			FROM `$this->table_ccu` as a 
-			INNER JOIN $this->table as b ON a.user_id = b.user_id 
+			LEFT JOIN $this->table as b ON a.user_id = b.user_id 
+			INNER JOIN $this->table_cc as c ON a.checklist_category_id = c.checklist_category_id 
+			INNER JOIN $this->table_d as d ON c.department_id = d.department_id 
+            INNER JOIN $this->table_h as h ON d.hospital_id = h.hospital_id 
+			$cond Group BY a.checklist_category_id ";
+        
+        
+        $sql = "
+		SELECT 
+			d.department_name,
+			 a.checklist_category_id,
+			 b.submit_id,
+             b.date_add,
+             h.hospital_name
+			FROM `$this->table_ccu` as a 
+			LEFT JOIN $this->table as b ON a.user_id = b.user_id 
 			INNER JOIN $this->table_cc as c ON a.checklist_category_id = c.checklist_category_id 
 			INNER JOIN $this->table_d as d ON c.department_id = d.department_id 
             INNER JOIN $this->table_h as h ON d.hospital_id = h.hospital_id 
 			$cond Group BY a.checklist_category_id ";
 			
-			
-		return $this->db->query($sql)->result();//_array(); 
+		$sql = "
+		SELECT 
+			d.department_name,
+			 a.checklist_category_id,
+             h.hospital_name
+			FROM `$this->table_ccu` as a 			
+			INNER JOIN $this->table_cc as c ON a.checklist_category_id = c.checklist_category_id 
+			INNER JOIN $this->table_d as d ON c.department_id = d.department_id 
+            INNER JOIN $this->table_h as h ON d.hospital_id = h.hospital_id 
+			$cond Group BY a.checklist_category_id ";
+        
+		return $this->db->query($sql)->result_array();//result();//_array(); 
 	}
 	
 	function getChecklistCategoryUsers( $cond='' )

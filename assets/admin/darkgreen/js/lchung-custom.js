@@ -585,6 +585,17 @@ $(document).ready(function () {
         
     });
     
+    $("#fchecklistresults").submit(function(){
+        var v = $('#fchecklistresults #day option:selected').val();
+        var vhospital_id = $("#fchecklistresults #hospital_id option:selected").val();
+        if( v == '' && vhospital_id == ''){
+            alert($('#fchecklistresults').data('requireddayorhospital'));
+            return false;
+        }        
+    });
+    
+    
+    
    $('#fdata #hospital_id').change(function(){
        var hospital_id = $(this).val();
        $('#checklist_manager_id option').empty();

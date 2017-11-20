@@ -1,7 +1,7 @@
-<?php /* Smarty version 3.1.28-dev/21, created on 2017-10-04 02:57:56
+<?php /* Smarty version 3.1.28-dev/21, created on 2017-11-20 02:25:05
          compiled from "C:\xampp\htdocs\customer\aline\application\modules\admin\views\login\index.tpl" */ ?>
 <?php
-/*%%SmartyHeaderCode:2122359d43214257299_67224954%%*/
+/*%%SmartyHeaderCode:179655a122ef1b15643_77455184%%*/
 if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
@@ -9,11 +9,11 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '2c914c9b350185ec7eb67b5440a6eb5ae8bf6f53' => 
     array (
       0 => 'C:\\xampp\\htdocs\\customer\\aline\\application\\modules\\admin\\views\\login\\index.tpl',
-      1 => 1506994561,
+      1 => 1511139951,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '2122359d43214257299_67224954',
+  'nocache_hash' => '179655a122ef1b15643_77455184',
   'variables' => 
   array (
     'base_tlp_admin' => 0,
@@ -23,13 +23,13 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   ),
   'has_nocache_code' => false,
   'version' => '3.1.28-dev/21',
-  'unifunc' => 'content_59d432142ed074_59126490',
+  'unifunc' => 'content_5a122ef1b9d863_40595668',
 ),false);
 /*/%%SmartyHeaderCode%%*/
-if ($_valid && !is_callable('content_59d432142ed074_59126490')) {
-function content_59d432142ed074_59126490 ($_smarty_tpl) {
+if ($_valid && !is_callable('content_5a122ef1b9d863_40595668')) {
+function content_5a122ef1b9d863_40595668 ($_smarty_tpl) {
 
-$_smarty_tpl->properties['nocache_hash'] = '2122359d43214257299_67224954';
+$_smarty_tpl->properties['nocache_hash'] = '179655a122ef1b15643_77455184';
 echo $_smarty_tpl->getSubTemplate ("login/header.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, 0, $_smarty_tpl->cache_lifetime, array(), 0);
 ?>
 
@@ -37,7 +37,7 @@ echo $_smarty_tpl->getSubTemplate ("login/header.tpl", $_smarty_tpl->cache_id, $
 <div class="login-box">
     <div class="login-logo">
         <a href="index.html"><img src="<?php echo $_smarty_tpl->tpl_vars['base_tlp_admin']->value;?>
-/img/logo-dark.png" alt="A-Line"></a>
+/img/aline-logo-login.png" alt="A-Line"></a>
     </div>
     <!-- /.login-logo -->
     <div class="login-content">

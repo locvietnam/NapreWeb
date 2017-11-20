@@ -1,5 +1,5 @@
 			<section class="content-header">
-            	<form class="form-horizontal margin-none" action="" method="get" name="fchecklistresults" id="fchecklistresults">
+            	<form class="form-horizontal margin-none" action="" method="get" name="fchecklistresults" id="fchecklistresults" data-requireddayorhospital="{$lable.dayorhospital}" data-required_day_month_year="{$lable.please_choose_day_month_year}">
                     <ul class="list-inline">
                         <li class="text-success"><span class="icon-calendar"></span> {$finddate}</li>
                     </ul>
@@ -75,34 +75,34 @@
                 <div class="table-responsive">
                     <table class="table table-bordered table-custom text-center text-bold">
                         <tr class="text-purple f-16">
-                            <th style="min-width: 50px; width: 100px;">{$lable.year_month}</th>
-                            <th style="min-width: 100px; width: 100px;">{$lable.hospital}</th>
+                            <th style="min-width: 50px; width: 90px;">{$lable.year_month}</th>
+                            <th style="min-width: 100px; width: 110px;">{$lable.hospital}</th>
                             <th style="min-width: 100px; width: 100px;">{$lable.department}</th>
-                            <th style="min-width: 120px; width: 120px;">{$lable.checklist}</th>
-                            <th style="min-width: 120px; width: 120px;">{$lable.situation}</th>
-                            <th style="min-width: 500px; width: 500px;">{$lable.comment}</th>
+                            <th style="min-width: 110px; width: 110px;">{$lable.checklist}</th>
+                            <th style="min-width: 110px; width: 110px;">{$lable.situation}</th>
+                            <th style="min-width: 120px; width: 120px;">{$lable.comment}</th>
                         </tr>                        
                         {if $list}
                         	{foreach from=$list item=item}
                         <tr>
-                            <td class="text-danger f-mont f-16">{$item->fdate_add}</td>
-                            <td class="text-danger f-mont f-16">{$item->hospital_name}</td>
-                            <td class="text-danger f-mont f-16">{$item->department_name}</td>
-                            <td>{$item->checklist_category}</td>
-                            {if $item->situation eq 1 && $item->checklist_of_user eq $item->submit_checklist_of_user}
+                            <td class="text-danger f-mont f-16">{$item.fdate_add}</td>
+                            <td class="text-danger f-mont f-16">{$item.hospital_name}</td>
+                            <td class="text-danger f-mont f-16">{$item.department_name}</td>
+                            <td>{$item.checklist_category}</td>
+                            {if $item.situation eq 1 && $item.checklist_of_user eq $item.submit_checklist_of_user && $item.submit_checklist_of_user >0}
                             <td>
-                            <a href="{$base_url_admin}/checklist-results/list-notice.html?checklistcategoryid={$item->checklist_category_id}&finddate={$finddate}" title="{$lable.situation_incomplete}">
+                            <a href="{$base_url_admin}/checklist-results/list-notice.html?checklistcategoryid={$item.checklist_category_id}&finddate={$item.finddates}" title="{$lable.situation_incomplete}">
                             <img src="{$base_tlp_admin}/img/icon/icon-checked.png" alt="icon-checked">
                             </a>
                             </td>
                             {else}
                             <td class="bg-danger">
-                            <a href="{$base_url_admin}/checklist-results/list-notice.html?checklistcategoryid={$item->checklist_category_id}&finddate={$finddate}" title="{$lable.situation_incomplete}">{$lable.situation_incomplete}</a>
+                            <a href="{$base_url_admin}/checklist-results/list-notice.html?checklistcategoryid={$item.checklist_category_id}&finddate={$item.finddates}" title="{$lable.situation_incomplete}">{$lable.situation_incomplete}</a>
                             </td>
                             {/if}
                             <td>
                                 <div class="row">
-                                	{foreach from=$item->users item=itemSub}
+                                	{foreach from=$item.users item=itemSub}
                                     <div class="item-user col-lg-3 col-md-3 col-xs-4 col-4">
                                     	<p style="width:100%;display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="{$itemSub.user_fullname}">{$itemSub.user_fullname}</p>                             
                                         {if $itemSub.emotion_icon eq 1 }

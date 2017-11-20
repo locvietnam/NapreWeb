@@ -10,7 +10,7 @@
 
         <!-- main-wrapper -->
         <div class="content-wrapper">
-        
+        	
         	{include file="$content.tpl"}
             
         </div>

@@ -1,13 +1,13 @@
 <?php
 /**
 * Controllers Backend login
-* Last update 26 June 2017
+* Last update 21 Nov 2017
 * 
 * @package backend
-* @copyright AirTrippy
-* @author 
-* @author position: PHP Developer
-* @since 26 June 2017
+* @copyright Aline
+* @author nhantam.webdeveloper@gmail.com
+* @author position: Panpic's PHP Developer team
+* @since 26 Aug 2017
 */
 
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
@@ -56,8 +56,10 @@ class Comment extends MY_Controller{
 		if( $datecomment == '' ){
 			$datecomment = date('Y/m/d');
 		}
+
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('textcomment', $this->lable['comment_required'],'required');
+
 		if( $this->input->post() ){
 			$submitid = $this->input->post('submitid');
 			$textcomment = $this->input->post('textcomment');
@@ -78,23 +80,25 @@ class Comment extends MY_Controller{
 		}
 		
 		$submitid = (int)$this->input->get('submitid');
+
 		if( $submitid == 0 ){
-			redirect(admin_url('comments.html')); 
+			redirect( admin_url('comments.html') );
 		}
 		
 		$cond = " Where a.submit_id = $submitid ";
 		if( $userLogin->role_id < 5 ) {//nhom admin, CEO, HR, top manager
-		}
-		else if( $userLogin->role_id == 5 ){//nham manager
+		} else if( $userLogin->role_id == 5 ){//nham manager
 			$cond .= " AND a.manager_id = $userLogin->user_id "; 
-		}
-		elseif( $userLogin->role_id == 6 ) { //staff
+		} elseif( $userLogin->role_id == 6 ) { //staff
 			$cond .= " AND b.user_id = $userLogin->user_id "; 
 		}
 		
 		$dept = $this->comment_model->getOne( "Where c.submit_id = $submitid" );
 		///print_r($on);die;
-		$items = $this->comment_model->getItems( $cond ); 
+		$items = $this->comment_model->getItems( $cond );
+
+		$hospitalData = $this->comment_model->hopistalItems();
+		$this->_data['hospitalData'] = $hospitalData;
 		
 		$this->_data['datecomment'] = $datecomment;
 		$this->_data['dept'] = $dept;
@@ -119,6 +123,7 @@ class Comment extends MY_Controller{
 		$cond = " Where a.parent_id = 0 "; 
 		$dept_id = (int)$this->input->get('dept');
 		$datecomment = $this->input->get('datecomment');
+
 		if( $datecomment == '' ){
 			$datecomment = date('Y/m/d');
 		}
@@ -133,19 +138,34 @@ class Comment extends MY_Controller{
 			$more_url .= "&dept=$dept_id";
 			$page_more_url .= "&dept=$dept";
 		}
-		
+
+
+
 		if( $userLogin->role_id < 5 ) {//nhom admin, CEO, HR, top manager
-		}
-		else if( $userLogin->role_id == 5 ){//nham manager
+
+		}else if( $userLogin->role_id == 5 ){//nham manager
 			$cond .= " AND a.manager_id = $userLogin->user_id "; 
-		}
-		elseif( $userLogin->role_id == 6 ) { //staff
+		}elseif( $userLogin->role_id == 6 ) { //staff
 			$cond .= " AND b.user_id = $userLogin->user_id "; 
-		}		
-		
+		}
+
+		// update 21 Nov 2017
+		$hospital_id = $this->input->get('hospital_id');
+		$checklistIds = '';
+		if($hospital_id != '') {
+			$dept_array = $this->comment_model->getDeparmentByHopistalId($hospital_id);
+			$dept_ids = $this->comment_model->hopistalIds($dept_array);
+			// checklist id
+			$checklist_arr = $this->comment_model->getChecklistByDeptIdS($dept_ids);
+			$checklistIds = $this->comment_model->checklistCategoryIds($checklist_arr);
+			if($checklistIds != '') {
+				$cond .= " GROUP BY a.id ";
+			}
+		}
+
 		$this->_data['more_url'] = $more_url;
 		
-		$totalItems  = $this->comment_model->countItems($cond);
+		$totalItems  = $this->comment_model->countItemsV2($cond, $checklistIds);
 		$per_page    = $this->lable['per_item_admin']; 
 		$base_url    = admin_url('comments.html'); 
 		$uri_segment = 4;
@@ -157,7 +177,7 @@ class Comment extends MY_Controller{
 		$curpage = $this->input->get('per_page');
 		$offset = ($curpage) ? $curpage : 0;      
 		$start = ($offset > 0) ? (($offset - 1) * $per_page) : $offset;
-		$items = $this->comment_model->getItems($cond, $per_page, $start); 
+		$items = $this->comment_model->getItemsV2($cond, $per_page, $start, $checklistIds);
 		
 		$cond = '';
 		if( $userLogin->role_id > 4 ){//truong hop chi lay nhung phong ban thuoc nham manager
@@ -165,6 +185,9 @@ class Comment extends MY_Controller{
 		}	
 		$listDept = $this->department_model->getAll( $cond );
 
+		$hospitalData = $this->comment_model->hopistalItems();
+		$this->_data['hospitalData'] = $hospitalData;
+		
 		$this->_data['datecomment'] = $datecomment;
 		$this->_data['strtime'] = $strtime;
 		$this->_data['listDept'] = $listDept;

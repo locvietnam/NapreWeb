@@ -2,7 +2,7 @@
 
 <div class="login-box">
     <div class="login-logo">
-        <a href="index.html"><img src="{$base_tlp_admin}/img/logo-dark.png" alt="A-Line"></a>
+        <a href="index.html"><img src="{$base_tlp_admin}/img/aline-logo-login.png" alt="A-Line"></a>
     </div>
     <!-- /.login-logo -->
     <div class="login-content">

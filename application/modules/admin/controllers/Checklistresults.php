@@ -43,7 +43,7 @@ class Checklistresults extends MY_Controller{
         $this->load->model('submitchecklist_model');
 	}
 	
-	public function index(){
+    public function index_bak(){
             
 	   /// error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
 		$this->_data['task'] = '';
@@ -233,6 +233,194 @@ class Checklistresults extends MY_Controller{
 		$this->_data['content'] = 'checklistresults/index';
 		$this->parser->parse("layout/index.tpl", $this->_data);
 	}
+    
+	public function index(){
+            
+	   /// error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
+		$this->_data['task'] = '';
+		$this->_data['breadcrumb'] = '';
+		$this->_data['alert'] = '';
+		$this->_data['title_page'] = $this->lable['checklist_results_title'];
+		$finddate = ( $this->input->get('finddate') != '' ) ? $this->input->get('finddate') : date('Y-m-d');
+		       
+        $department_id  = (int)$this->input->get('department_id');
+        $hospital_id    = (int)$this->input->get('hospital_id');
+        $yearValue      = (int)$this->input->get('year');
+        $monthValue     = $this->input->get('month');
+        $dayValue     = $this->input->get('day');
+        if(!isset($_GET['day'])){
+            $dayValue     = date('d');
+        }
+        if(!isset($_GET['year'])){
+            $yearValue     = date('Y');
+        }
+        if(!isset($_GET['month'])){
+            $monthValue     = date('m');
+        }
+        if( $monthValue == '' )
+            $monthValue = date('m');
+		
+		$userLoging = $this->_data['user_data'];
+		if( $userLoging->role_id == 5 ){//la nhom manager moi duoc update manager_viewed of table pp_submit
+			$d_user = $this->userassigndept_model->getAll( "Where a.avail = 1 AND b.manager_id = " . $userLoging->user_id );
+			foreach ( $d_user as $u ) {
+				$dataUpdate['manager_viewed'] = 1;
+				$this->checklistresults_model->db->update( 
+					$this->checklistresults_model->table, $dataUpdate, array( 'user_id' => $u['user_id'], 'manager_viewed' => '0' )
+				); 
+			}
+		}
+        //echo date("Y-m-d", strtotime( $yearValue . "-" . $monthValue . "-01"));
+		$maxDays =  date('t', strtotime( $yearValue . "-" . $monthValue . "-01"));
+		$data = array();
+		$dataChecklist = array();
+		$submitChecklist = array();
+		$maxUser = 0;
+        
+        $where = " Where a.checklist_category_id > 0 ";          
+        $where_manager_id = " AND c.manager_id = " . (int)$userLoging->user_id;
+		if( $userLoging->role_id >= 5 ){
+			$where .= $where_manager_id;
+		}
+        if( $department_id > 0 ){
+            $where .= " AND c.department_id = $department_id ";
+        }
+        if( $hospital_id > 0 ){
+            $where .= " AND d.hospital_id = $hospital_id ";
+        }
+        //echo $finddate;die;
+        
+        $iday = 1;
+        $staff_id     = (int)$this->input->get('staff_id');        
+        if($dayValue != '' ) {
+            $finddate = $yearValue . "-" . $monthValue . "-" . $dayValue;
+        }
+        
+        if($dayValue > 0 ){
+            $iday = $dayValue;
+            $maxDays = $dayValue;
+        }
+		$list = $this->checklistresults_model->getDepartmentOfChecklistCategory( $where );
+        $dataList = array();
+        for($i = $iday; $i<=$maxDays; $i++){
+            $d = ($i >= 10 ) ? $i : '0' . (int)$i;
+            $finddates = $yearValue . '-' . $monthValue . '-' . $d;
+            foreach ( $list as $item ){
+                $item['submit_checklist_of_user'] = 0;
+                $checklist_category_id = $item['checklist_category_id'];
+                
+                $sql ="SELECT count(cl.checklist_id) as total
+			 	FROM pp_checklist as cl WHERE cl.parent_category_id  = $checklist_category_id
+				GROUP BY cl.parent_category_id";
+                
+                $item['checklist_of_user'] = $this->db->query($sql)->row()->total;;
+                $item['fdate_add'] = date('d/m/Y', strtotime($finddates));
+                $item['finddates'] = $finddates;
+                $inUser_id = array();
+                $inSubmit_id = array();
+                
+                $where = " Where a.checklist_category_id = $checklist_category_id AND DATE(c.date_add) = DATE('" . $finddates . "')";                
+                $user = $this->checklistresults_model->getChecklistCategoryUsers( $where );
+                //print_r( $user );
+                //echo"\n";
+                $cUser = count( $user );
+                $item['users'] = $user;
+                $item['situation'] = 0;
+                $checkListCate = $this->checklistresults_model->getItemCheckListCate(" Where a.checklist_category_id = $checklist_category_id AND avail = 1 ");
+                $item['checklist_category'] = '';
+                if( !empty( $checkListCate ) ){
+                    if( $checkListCate['parent_category_id'] == 0 ){
+                        $item['checklist_category'] = $checkListCate['checklist_category'];
+                    } else {
+                        $checklist_category_idS = (int)$checkListCate['parent_category_id'];
+                        $checkListCate = $this->checklistresults_model->getItemCheckListCate(" Where a.checklist_category_id = $checklist_category_idS AND avail = 1 ");
+                        $item['checklist_category'] = $checkListCate['checklist_category'];
+                    }
+                }    
+                
+                foreach ( $user as $u ) {
+                     $inUser_id[] = $u['user_id'];
+                }
+                $checklistOfUser = array();
+                $submitChecklistOfUser = array();
+                $cSubmitd = 0;
+                if( !empty( $inUser_id ) ){ //kiem tra tinh hinh cong viec hoan thanh hay chua
+                    //lay tất cả Submit checklist của user
+                    //$checklist_category_id = array();
+                    $where = " Where c.user_id IN(" . implode(",", $inUser_id) . ") AND DATE(c.date_add) = DATE('" . $finddates . "') ";                    
+                    $Submitd = $this->checklistresults_model->getStatusSituation( $where );
+                    $cSubmitd = count( $Submitd );
+                    $item['submit_checklist_of_user'] = $cSubmitd;
+                    if( $item['checklist_of_user'] ==  $cSubmitd ){//neu tong so checklist_of_user > hon nhung user submit thi la chua hoan thanh khg can phai foreach phia duoi nua
+                        $t = 1;
+                        foreach( $Submitd as $v ){
+                            if( $v->checklist_checked == 0 ){
+                                $item['situation'] = 0;//chua hoan thanh cong viec
+                                $t = 0;
+                            }
+                        }
+                        if($t && $cSubmitd > 0 ){
+                            $item['situation'] = 1;//da hoan thanh cong viec
+                        }
+                    }
+                } 
+                else{//truong hop con user submit het nhung kiem tra tinh trang hoan thanh chua
+                    $item['situation'] = 0;//chua hoan thanh cong viec
+                    
+                }
+                $data[] = $item;
+            }//End foreach;            
+        }
+        
+        $yearData = array();
+        $strY = '';
+        $y = date('Y');
+        $yE = $y - 9;//10 nam
+        for( $i = $y; $i >= $yE; $i--){
+            $selected = '';
+            if( $yearValue == $i ){
+                $selected = 'selected';
+            }
+            $strY .= '<option ' . $selected . ' value="' . $i . '">' . $i . '</option>';
+        }
+        
+        $strM = '';        
+        for( $i = 1; $i <= 12; $i++){
+            $selected = '';
+            $iStr = ($i < 10 ) ? '0' . $i : $i;            
+            if( $monthValue == $iStr ){
+                $selected = 'selected';
+            }            
+            $strM .= '<option ' . $selected . ' value="' . $iStr . '">' . $iStr . '</option>';
+        }
+        
+        $strD = '<option value="">---</option>';         
+        $maxDayNow =  date('t', strtotime( $yearValue . "-" . $monthValue . "-01"));        
+        for( $i = 1; $i <= $maxDayNow; $i++ ){
+            $selected = '';
+            $iStr = ($i < 10 ) ? '0' . $i : $i;            
+            if( $dayValue == $iStr ){
+                $selected = 'selected';
+            }            
+            $strD .= '<option ' . $selected . ' value="' . $iStr . '">' . $iStr . '</option>';
+        }
+        $this->_data['dayData'] = $strD;
+        $this->_data['yearData'] = $strY;
+        $this->_data['monthData'] = $strM;
+        $this->_data['finddate'] = $finddate;
+		//$this->_data['maxUser'] = $maxUser;
+		$this->_data['list'] = $data;
+        $this->_data['hospitalData'] = $this->hospital_model->getItems();
+        $departmentData = array();        
+        if( $hospital_id != '' ) {
+            $cond = " Where a.hospital_id = $hospital_id ";
+            $departmentData = $this->department_model->getAll($cond);  
+        }
+        $this->_data['departmentData'] = $departmentData;
+		
+		$this->_data['content'] = 'checklistresults/index';
+		$this->parser->parse("layout/index.tpl", $this->_data);
+	}
 	
 	///$cond = 
 			///$d = $this->checklistresults_model->getChecklistCateSub();
@@ -250,7 +438,7 @@ class Checklistresults extends MY_Controller{
         $hospital_id    = (int)$this->input->get('hospital_id');
         $yearValue      = ((int)$this->input->get('year')) ? $this->input->get('year') : date('Y');
         $monthValue     = ($this->input->get('month')) ? $this->input->get('month') : date('m');
-        $dayValue     = $this->input->get('day');//) ? $this->input->get('day') : date('d');
+        $dayValue     = (!isset($_GET['day'])) ? date('d') : $this->input->get('day');//) ? $this->input->get('day') : date('d');
         $iday = 1;
         $staff_id     = (int)$this->input->get('staff_id');        
         $is_whereMonth = 0;
@@ -311,13 +499,13 @@ class Checklistresults extends MY_Controller{
         $dataCu = $query->result_array();
         //die;
         for($i = $iday; $i<=$maxDays; $i++){
-            $d = ($i >= 10 ) ? $i : '0' . $i;
+            $d = ($i >= 10 ) ? $i : '0' . (int)$i;
             $finddates = $yearValue . '-' . $monthValue . '-' . $d;    
             //echo $finddates."\n";
             foreach ( $dataCu as $item ){
                 $checklist_category_id = $item['checklist_category_id'];
                 $user_id = $item['user_id'];
-                $item['situation'] = 1;
+                $item['situation'] = 0;
                 $item['fdate_add'] = date('Y月m月d日', strtotime( $finddates ) );
                 $sqlSub = "SELECT 
                             s.submit_id, s.emotion_icon, COUNT(s.submit_id) as is_submit,
@@ -343,16 +531,20 @@ class Checklistresults extends MY_Controller{
 				$Submitd = $this->checklistresults_model->getStatusSituation( $where );
 				$cSubmitd = count( $Submitd );
 				$item['submit_checklist_of_user'] = $cSubmitd;
-				if( $item['checklist_of_user'] >  $cSubmitd ){//neu tong so checklist_of_user > hon nhung user submit thi la chua hoan thanh khg can phai foreach phia duoi nua
-					$item['situation'] = 0;//chua hoan thanh cong viec
-				}
-				else {//truong hop con user submit het nhung kiem tra tinh trang hoan thanh chua
-					foreach( $Submitd as $v ){
+				if( $item['checklist_of_user'] ==  $cSubmitd ){//neu tong so checklist_of_user > hon nhung user submit thi la chua hoan thanh khg can phai foreach phia duoi nua
+					$t = 1;
+                    foreach( $Submitd as $v ){
 						if( $v->checklist_checked == 0 ){
 							$item['situation'] = 0;//chua hoan thanh cong viec
-							//break;
+							$t = 0;
 						}
 					}
+                    if($t){
+                        $item['situation'] = 1;//da hoan thanh cong viec
+                    }
+				}
+				else {//truong hop con user submit het nhung kiem tra tinh trang hoan thanh chua
+					$item['situation'] = 0;//chua hoan thanh cong viec
 				}
                 //print_r($item);die;
                 //print_r( $dataSub );
